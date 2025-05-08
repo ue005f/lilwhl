@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>REBIRTH</title>
+  <link rel="icon" href="https://images.plurk.com/hHFrUYO2mZMgc9ze9uqGv.png" type="image/x-icon">
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2em;
+      background-image:url(https://images.plurk.com/2gKtxuzw9y0sNZV3V324Yq.png);
+      background-color: #0a0a0a;
+      font-family:Impact;
+    }
+    h1 {
+      color: #333;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      color: transparent;
+    }
+    li {
+      margin: 0.3em 0;
+    }
+    button {
+      padding: 4.5em 4.5em;
+      margin-top: 1em;
+      cursor: pointer;
+      border:0;
+    
+      color:#0a0a0a;
+    }
+    
+    .bbbb{
+     padding: 4.5em 4.5em; background-image:url(https://images.plurk.com/hHFrUYO2mZMgc9ze9uqGv.png);
+     background-color: transparent;
+ background-size:cover;
+      border:0;
+    }
+    .xxxx{
+        border-radius:50px;
+        font-size: 1px;
+    }
+    
+    #result-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      visibility: hidden;
+    }
+    #result-box {
+      background-color: #c5c5c5;
+      padding: 3em 3em;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      text-align: center;
+      font-size: 2em;
+      min-width: 300px;
+      min-height: 150px;
+      animation: popin 0.3s ease-out;
+    }
+    @keyframes popin {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    #close-btn {
+      margin-top: 1.5em;
+      font-size: 1em;
+      padding: 0.5em 1.5em;
+      display: none;
+    }
+    .highlight {
+      color: #d6006e;
+      font-weight: bold;
+      animation: flicker 0.3s infinite;
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+  </style>
+</head>
+<body>
+  <h1></h1>
+  <h3></h3>
+  <br><br><br>
+  <div>
+      <img src="https://images.plurk.com/1ZLslBHLOMfjK0whMkWEFu.png" width=60%>
+  </div>
+  <br><br><br>
+  
+  <button onclick="drawPrize()" class="bbbb"></button>
+  <ul id="prize-list"></ul>  
+
+  <!-- 抽獎結果遮罩 -->
+  <div id="result-overlay">
+    <div id="result-box">
+      <div id="result-text" class="highlight">抽獎中…</div>
+      <button id="close-btn" onclick="closeResult()" class="xxxx">X</button>
+    </div>
+
+  <script>
+    // 初始化獎項
+    const prizes = [
+      '	Livly配件精選品Vol.1	',
+'	聖誕夜的特別茶會	',
+'	道具研究員的精選品Vol.1	',
+'	居家聖誕間	',
+'	祕密的娃娃屋	',
+'	神秘森林之島	',
+'	雪國的柿子島	',
+'	被徹底遺忘的交誼廳	',
+'	Dark Forest	',
+'	天蓬床臥室	',
+'	陰森旅館小島	',
+'	消失在深海的艦長	',
+'	魔女沉睡之島	',
+'	繽紛的香菇森林	',
+'	偵探事務所的情景模型	',
+'	七彩鬆餅之島	',
+'	鍊金術師實習生的小屋	',
+'	落星之島	',
+'	迷路雲朵與空地少年	',
+'	常夏之島	',
+'	水晶之森	',
+'	遠古骨骸與花之島	',
+'	南國樂園	',
+'	深邃森林的橡子之島	',
+'	雨後天晴之島	',
+'	野莓茶會	',
+'	原始森林與電菇之島	',
+'	書本上的智慧之島	',
+'	賀年卡攝影棚2022	',
+'	暖烘烘暖桌與蜜柑之島	',
+'	A Twinkling Christmas Tale	',
+'	乾燥玫瑰花與黃金鳥	',
+'	~Livly 20th Anniversary~20種道具復刻登場	',
+'	聖誕薑餅屋	',
+'	哥德式化裝舞會	',
+'	食指大動秋季便當島	',
+'	紅葉飄落的古鎖之樹	',
+'	中華風穿搭集錦	',
+'	幻都的桃子之島	',
+'	My Halloween Room	',
+'	Livly配件精選品 for 萬聖節	',
+'	鬼屋之夜	',
+'	木馬的溫馨嬰兒房	',
+'	悲戚黑影的匿跡之島	',
+'	某位魔女的不可思議大鍋	',
+'	剛出爐的馥郁香氣	',
+'	黃昏下的波斯菊花田	',
+'	十五夜的滿月之島	',
+'	軟糖花的苗床	',
+'	湖畔的隱密咖啡廳	',
+'	夏夜的煙火	',
+'	盛夏的小小泳池	',
+'	夢幻夜幕花園	',
+'	五彩繽紛食蟲植物島	',
+'	Livly配件精選品 feat.無限沙丘	',
+'	Livly Motif Collection Vol.3	',
+'	粉紅櫻桃奇異茶會	',
+'	繡球花與水珠之庭	',
+'	不夜城的美式餐館	',
+'	Livly Motif Collection Vol.2	',
+'	無限沙丘	',
+'	MODE	',
+'	Livly Motif Collection Vol.1	',
+'	露營鄉村	',
+'	幸運草箱庭	',
+'	鍊金術師與王宮研究室	',
+'	Livly’s History	',
+'	Gold Ray	',
+'	被遺下的月之島	',
+'	春光明媚復活節花園	',
+'	靜止的花園	',
+'	無重力花園	',
+'	20th Anniversary Island	',
+'	白色情人節咖啡時光	',
+'	小小裁縫店	',
+'	20th Anniversary Fashion	',
+'	薔薇盛開小小花園	',
+'	睏睏黑暗樹莓之森	',
+'	甜蜜情人節小屋	',
+'	暖呼呼柚子浴小島	',
+'	深邃森林的橡子之島 故事仍在繼續	',
+'	紫羅蘭色的回憶	',
+'	珊瑚貿易商的小島	',
+'	新春色彩和裝2022	',
+'	花牌宅第	',
+'	星空與薄暮之島	',
+'	旅行熱氣球之島	',
+'	冬季的幽靜植物園之島	',
+'	暖洋洋暖爐與毛線之島	',
+'	Christmas Dinner Party	',
+'	Cyber壽司verse	',
+'	鮮花馬卡龍之島	',
+'	秋色盡染楓葉之島	',
+'	紙模型馬戲團	',
+'	手工製 ‧ 豐收之島	',
+'	Ghost Treats Island	',
+'	盡情享受！萬聖節2023	',
+'	美樂蒂&酷洛米小屋	',
+'	幽遠的湖畔	',
+'	Halloween Cemetery	',
+'	棘瓣花驚魂街頭	',
+'	露天電影夜之島	',
+'	Hello Kitty的鍊金術研究室	',
+'	碧藍燭火神殿之島	',
+'	古城詛咒與詩人居室	',
+'	花卉果凍廚房	',
+'	謎團重重古代遺跡之島	',
+'	MODE Vol.2	',
+'	攤販雲集夏日祭典之島	',
+'	Summer Ice Island	',
+'	星光粉晶球之島	',
+'	不可思議的西洋棋盤之庭	',
+'	迷霧之街的裁縫店	',
+'	光彩奪目氣球之島	',
+'	袖珍復古小屋	',
+'	Forgotten Wedding Hall	',
+'	暝想竹林庭園	',
+'	顛倒雨傘之島	',
+'	星光熠熠鈴蘭之島	',
+'	轉蛋模型 ‧ 袖珍攝影棚	',
+'	Foggy Graffiti Street	',
+'	新鮮現採草莓果醬之島	',
+'	白日夢工坊	',
+'	瀑布深處的小小洞窟	',
+'	Faraway Resort Island	',
+'	發條裝置曼德拉草之島	',
+'	Livly Motif Collection Vol.4	',
+'	復活節日光房	',
+'	星球降落之丘	',
+'	蜂蜜派對之島	',
+'	暮夜旋轉木馬暗室	',
+'	植物保育 ‧ 鏡片之島	',
+'	如花似錦春色女兒節	',
+'	極光照耀之森	',
+'	燈泡生態瓶與苔蘚之島	',
+'	創意手工 ‧ 蘿莉塔小屋	',
+'	Love Laboratory	',
+'	巷弄深處的小小祕密基地	',
+'	繁華絢麗天燈之島	',
+'	多肉植物與電腦之島	',
+'	花草茶工坊	',
+'	凝雪山茶花之庭 新春色彩和裝2023	',
+'	銀杏圖書館之島	',
+'	鮮紅香菇森林	',
+'	Midnight Magic Show！	',
+'	見習占卜師的房間	',
+'	小紅帽的故事之島	',
+'	魔女與帽子之島	',
+'	飄香桂花森林	',
+'	Vampire Night Halloween	',
+'	不可思議的蘋果屋之島	',
+'	隱密巷弄的懷舊咖啡館	',
+'	蛋白石神殿之島	',
+'	黃昏中閃耀的水上之城	',
+'	賞月筵席之島	',
+'	森林中的茶壺小屋	',
+'	金碧輝煌銀行之島	',
+'	貝殼工藝之島	',
+'	妖異柳樹之島	',
+'	夕陽天空與向日葵田	',
+'	郵局泰迪熊之島	',
+'	夏日黃昏與祭典之島	',
+'	藍莓廚房之島	',
+'	Sweet Nail Salon	',
+'	花與門扉之島	',
+'	方城之戰的會客室	',
+'	夢色冰淇淋蛋糕之島	',
+'	泡泡植物之島	',
+'	Secret Toy Wedding	',
+'	雨天的繡球花日光房	',
+'	暖暖陽光氣味之島	',
+'	復古未來機場	',
+'	日常的共鳴	',
+'	不死靈藥與紫藤之庭	',
+'	夜市電子遊樂場	',
+'	袖珍叢林之島	',
+'	museum－古生物館	',
+'	坐擁海景度假之島	',
+'	Memory Ark Island	',
+'	不可思議的草莓工廠	',
+'	復活節彩蛋的守候之庭	',
+'	回憶的閣樓	',
+'	銀荊花之島	',
+'	奇幻電梯之旅	',
+'	Sweet White Day Island	',
+'	春宵美景垂枝櫻之島	',
+'	小鳥們的聚會之島	',
+'	午後微眠日落小屋	',
+'	雪地露營之島	',
+'	Valentine Card Island	',
+'	沉眠蛋群的守護之島	',
+'	調香師之島	',
+'	電子植物與電腦之島	',
+'	LIVLY ROCK LIVE 2024	',
+'	Bubble Bath Island	',
+'	紅白梅花之島 新春色彩和裝2024	'
+      
+    ];
+
+    const prizeListEl = document.getElementById('prize-list');
+    const resultTextEl = document.getElementById('result-text');
+    const resultOverlayEl = document.getElementById('result-overlay');
+    const closeBtnEl = document.getElementById('close-btn');
+
+    // 顯示獎項清單
+    const countMap = {};
+    prizes.forEach(p => countMap[p] = (countMap[p] || 0) + 1);
+    for (const [name, count] of Object.entries(countMap)) {
+      const li = document.createElement('li');
+      li.textContent = `${name} × ${count}`;
+      prizeListEl.appendChild(li);
+    }
+
+    // Fisher-Yates 洗牌函數
+    function shuffle(array) {
+      let m = array.length, t, i;
+      while (m) {
+        i = Math.floor(Math.random() * m--);
+        t = array[m];
+        array[m] = array[i];
+        array[i] = t;
+      }
+      return array;
+    }
+
+    function drawPrize() {
+      if (prizes.length === 0) {
+        resultTextEl.textContent = '所有獎項都已抽完！';
+        closeBtnEl.style.display = 'block';
+        resultOverlayEl.style.visibility = 'visible';
+        return;
+      }
+
+      resultOverlayEl.style.visibility = 'visible';
+      closeBtnEl.style.display = 'none';
+      resultTextEl.classList.add('highlight');
+
+      const fullCycle = shuffle([...new Set(prizes)]); // 每個獎項至少出現一次（順序亂）
+      const randomFlashes = Array.from({ length: 8 }, () => prizes[Math.floor(Math.random() * prizes.length)]);
+      const animationSequence = [...fullCycle, ...randomFlashes];
+
+      let i = 0;
+      const interval = setInterval(() => {
+        resultTextEl.textContent = ` ${animationSequence[i]}`;
+        i++;
+        if (i >= animationSequence.length) {
+          clearInterval(interval);
+
+          // 正式抽獎
+          const index = Math.floor(Math.random() * prizes.length);
+const realPrize = prizes[index];
+          resultTextEl.textContent = `！${realPrize}！`;
+          resultTextEl.classList.remove('highlight');
+          closeBtnEl.style.display = 'inline-block';
+        }
+      }, 80);
+    }
+
+    function closeResult() {
+      resultOverlayEl.style.visibility = 'hidden';
+    }
+  </script>
+</body>
+</html>
+
+
+
+
+
