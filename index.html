@@ -324,18 +324,6 @@
       prizeListEl.appendChild(li);
     }
 
-    // Fisher-Yates 洗牌函數
-    function shuffle(array) {
-      let m = array.length, t, i;
-      while (m) {
-        i = Math.floor(Math.random() * m--);
-        t = array[m];
-        array[m] = array[i];
-        array[i] = t;
-      }
-      return array;
-    }
-
     function drawPrize() {
       if (prizes.length === 0) {
         resultTextEl.textContent = '所有獎項都已抽完！';
@@ -346,18 +334,18 @@
 
       resultOverlayEl.style.visibility = 'visible';
       closeBtnEl.style.display = 'none';
-      resultTextEl.classList.add('highlight');
 
-      // 每個獎項至少出現一次（順序亂）
-      const randomFlashes = Array.from({ length: 8 }, () => prizes[Math.floor(Math.random() * 6)]);
-      const animationSequence = [...fullCycle, ...randomFlashes];
+      let currentIndex = 0;
+      let animationCount = 0;
+      const maxAnimations = 20; // 動畫跑幾次
+      const interval = 80; // 每次切換間隔（毫秒）
 
-      let i = 0;
-      const interval = setInterval(() => {
-        resultTextEl.textContent = ` ${animationSequence[i]}`;
-        i++;
-        if (i >= animationSequence.length) {
-          clearInterval(interval);
+      const fakeInterval = setInterval(() => {
+        const fakePrize = prizes[Math.floor(Math.random() * prizes.length)];
+        resultTextEl.textContent = `抽獎中… ${fakePrize}`;
+        animationCount++;
+        if (animationCount >= maxAnimations) {
+          clearInterval(fakeInterval);
 
           // 正式抽獎
           const index = Math.floor(Math.random() * prizes.length);
