@@ -348,7 +348,7 @@
       closeBtnEl.style.display = 'none';
       resultTextEl.classList.add('highlight');
 
-      const fullCycle = shuffle([...new Set(prizes)]); // 每個獎項至少出現一次（順序亂）
+      // 每個獎項至少出現一次（順序亂）
       const randomFlashes = Array.from({ length: 8 }, () => prizes[Math.floor(Math.random() * prizes.length)]);
       const animationSequence = [...fullCycle, ...randomFlashes];
 
